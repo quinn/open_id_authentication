@@ -13,6 +13,7 @@ else
 end
 
 ActionDispatch::Callbacks.to_prepare do
+  require 'openid'
   OpenID::Util.logger = Rails.logger
   ActionController::Base.send :include, OpenIdAuthentication
 end
