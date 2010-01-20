@@ -10,7 +10,7 @@ require File.dirname(__FILE__) + '/open_id_authentication/request'
 require File.dirname(__FILE__) + '/open_id_authentication/timeout_fixes' if OpenID::VERSION == "2.0.4"
 
 module OpenIdAuthentication
-  OPEN_ID_AUTHENTICATION_DIR = RAILS_ROOT + "/tmp/openids"
+  OPEN_ID_AUTHENTICATION_DIR = Rails.root + "/tmp/openids"
 
   def self.store
     @@store
@@ -153,6 +153,9 @@ module OpenIdAuthentication
     def complete_open_id_authentication
       params_with_path = params.reject { |key, value| request.path_parameters[key] }
       params_with_path.delete(:format)
+      params_with_path.delete('action')
+      params_with_path.delete('controller')
+      
       open_id_response = timeout_protection_from_identity_server { open_id_consumer.complete(params_with_path, requested_url) }
       identity_url     = normalize_identifier(open_id_response.display_identifier) if open_id_response.display_identifier
 
