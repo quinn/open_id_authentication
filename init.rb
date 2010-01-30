@@ -1,9 +1,11 @@
-# if Rails.version < '3'
+if Rails.version < '3'
   config.gem 'rack-openid', :lib => 'rack/openid', :version => '>=0.2.1'
-# end
+end
 
-config.middleware.use :OpenIdAuthentication
-# require 'ruby-debug'; debugger
+require 'open_id_authentication'
+
+config.middleware.use OpenIdAuthentication
+
 config.after_initialize do
   require 'rack/openid'
   OpenID::Util.logger = Rails.logger

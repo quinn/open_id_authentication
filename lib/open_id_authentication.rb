@@ -4,6 +4,11 @@ require 'rack/openid'
 
 module OpenIdAuthentication
   def self.new(app)
+    store = OpenIdAuthentication.store
+    if store.nil?
+      Rails.logger.warn "OpenIdAuthentication.store is nil. Using in-memory store."
+    end
+
     ::Rack::OpenID.new(app, OpenIdAuthentication.store)
   end
 
@@ -22,6 +27,7 @@ module OpenIdAuthentication
       require 'openid/store/filesystem'
       OpenID::Store::Filesystem.new(Rails.root.join('tmp/openids'))
     when :memcache
+      require 'memcache'
       require 'openid/store/memcache'
       OpenID::Store::Memcache.new(MemCache.new(parameters))
     else
@@ -29,7 +35,7 @@ module OpenIdAuthentication
     end
   end
 
-  self.store = :memory
+  self.store = nil
 
   class Result
     ERROR_MESSAGES = {
